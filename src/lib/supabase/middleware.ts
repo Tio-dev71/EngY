@@ -1,0 +1,62 @@
+import { createServerClient } from '@supabase/ssr'
+import { NextResponse, type NextRequest } from 'next/server'
+
+export async function updateSession(request: NextRequest) {
+  let supabaseResponse = NextResponse.next({ request })
+
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
+  const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+
+  // If Supabase URL is not configured or is a placeholder, pass through gracefully
+  if (!supabaseUrl || supabaseUrl.includes('your-project') || !supabaseKey) {
+    return supabaseResponse
+  }
+
+  try {
+    const supabase = createServerClient(
+      supabaseUrl,
+      supabaseKey,
+      {
+        cookies: {
+          getAll() {
+            return request.cookies.getAll()
+          },
+          setAll(cookiesToSet) {
+            cookiesToSet.forEach(({ name, value }) =>
+              request.cookies.set(name, value)
+            )
+            supabaseResponse = NextResponse.next({ request })
+            cookiesToSet.forEach(({ name, value, options }) =>
+              supabaseResponse.cookies.set(name, value, options)
+            )
+          },
+        },
+      }
+    )
+
+    const { data: { user } } = await supabase.auth.getUser()
+
+    // Public paths that don't require auth
+    const publicPaths = ['/', '/login', '/register', '/pricing']
+    const isPublicPath = publicPaths.some(
+      path => request.nextUrl.pathname === path
+    )
+
+    if (!user && !isPublicPath && request.nextUrl.pathname.startsWith('/dashboard')) {
+      const url = request.nextUrl.clone()
+      url.pathname = '/login'
+      return NextResponse.redirect(url)
+    }
+
+    if (user && (request.nextUrl.pathname === '/login' || request.nextUrl.pathname === '/register')) {
+      const url = request.nextUrl.clone()
+      url.pathname = '/dashboard'
+      return NextResponse.redirect(url)
+    }
+  } catch (error) {
+    // If Supabase is unreachable, pass through so client-side state/fallback works
+    console.warn('Supabase middleware auth check skipped:', error)
+  }
+
+  return supabaseResponse
+}
