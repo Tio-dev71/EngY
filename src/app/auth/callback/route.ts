@@ -32,3 +32,4 @@ export async function GET(request: Request) {
   // Fallback to login with error state
   return NextResponse.redirect(`${origin}/login?error=oauth_failed`)
 }
+
