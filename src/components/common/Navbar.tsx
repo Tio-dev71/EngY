@@ -30,6 +30,7 @@ import { useAppStore, useLanguageStore } from '@/lib/store'
 import type { TrackType } from '@/types/database'
 import VoiceSelector from './VoiceSelector'
 import { createClient } from '@/lib/supabase/client'
+import { isUserAdmin } from '@/lib/auth'
 
 export default function Navbar() {
   const pathname = usePathname()
@@ -277,14 +278,17 @@ export default function Navbar() {
               <span className="uppercase">{language}</span>
             </button>
 
-            {/* Admin Portal Quick Link */}
-            <Link
-              href="/admin"
-              className="hidden md:inline-flex items-center gap-1 p-2 rounded-xl text-gray-500 hover:text-indigo-600 hover:bg-indigo-50 transition-colors shrink-0"
-              title="Trung tâm Quản trị Admin (Thêm bài học & Đề thi TOEIC)"
-            >
-              <ShieldCheck className="w-4 h-4 text-indigo-600" />
-            </Link>
+            {/* Admin Portal Quick Link - ONLY visible to verified Admins */}
+            {mounted && isUserAdmin(user) && (
+              <Link
+                href="/admin"
+                className="hidden md:inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl text-xs font-bold text-indigo-700 bg-indigo-50 border border-indigo-200/80 hover:bg-indigo-100 transition-colors shrink-0 shadow-xs"
+                title="Trung tâm Quản trị Admin (Thêm bài học & Đề thi TOEIC)"
+              >
+                <ShieldCheck className="w-4 h-4 text-indigo-600" />
+                <span>Admin</span>
+              </Link>
+            )}
 
             {/* User Profile Dropdown or Login/Register Buttons */}
             {user ? (
@@ -348,14 +352,16 @@ export default function Navbar() {
                         <span>{t('pricing')} (Pro)</span>
                       </Link>
 
-                      <Link
-                        href="/admin"
-                        onClick={() => setUserDropdownOpen(false)}
-                        className="flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-bold text-indigo-700 bg-indigo-50/80 hover:bg-indigo-100 transition-colors"
-                      >
-                        <ShieldCheck className="w-3.5 h-3.5 text-indigo-600" />
-                        <span>Quản Trị Admin</span>
-                      </Link>
+                      {isUserAdmin(user) && (
+                        <Link
+                          href="/admin"
+                          onClick={() => setUserDropdownOpen(false)}
+                          className="flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-bold text-indigo-700 bg-indigo-50/80 hover:bg-indigo-100 transition-colors"
+                        >
+                          <ShieldCheck className="w-3.5 h-3.5 text-indigo-600" />
+                          <span>Quản Trị Admin</span>
+                        </Link>
+                      )}
                     </div>
 
                     <div className="my-1.5 border-t border-gray-100" />
@@ -455,17 +461,19 @@ export default function Navbar() {
               )
             })}
 
-            <Link
-              href="/admin"
-              onClick={() => setMobileMenuOpen(false)}
-              className="col-span-2 flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs font-bold text-indigo-700 bg-indigo-50/90 border border-indigo-200/70 hover:bg-indigo-100 transition-colors"
-            >
-              <div className="flex items-center gap-2">
-                <ShieldCheck className="w-4 h-4 text-indigo-600 shrink-0" />
-                <span>Quản Trị Admin (Thêm Bài Học & Đề Thi)</span>
-              </div>
-              <ChevronDown className="w-3.5 h-3.5 -rotate-90 text-indigo-400" />
-            </Link>
+            {isUserAdmin(user) && (
+              <Link
+                href="/admin"
+                onClick={() => setMobileMenuOpen(false)}
+                className="col-span-2 flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs font-bold text-indigo-700 bg-indigo-50/90 border border-indigo-200/70 hover:bg-indigo-100 transition-colors"
+              >
+                <div className="flex items-center gap-2">
+                  <ShieldCheck className="w-4 h-4 text-indigo-600 shrink-0" />
+                  <span>Quản Trị Admin (Thêm Bài Học & Đề Thi)</span>
+                </div>
+                <ChevronDown className="w-3.5 h-3.5 -rotate-90 text-indigo-400" />
+              </Link>
+            )}
           </div>
 
           {/* If Not Logged In, Mobile Login & Register Actions */}

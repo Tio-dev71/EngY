@@ -41,12 +41,14 @@ import type {
 } from '@/types/database'
 import { toast } from 'sonner'
 import { playCorrectSound, playWrongSound, playVictorySound, fireConfetti } from '@/lib/soundEffects'
+import { isUserAdmin } from '@/lib/auth'
 
 type AdminTab = 'overview' | 'add_content' | 'manage_lessons' | 'toeic_exams'
 type ContentType = 'vocab' | 'collocation' | 'grammar' | 'pattern'
 
 export default function AdminPage() {
   const {
+    user,
     getAllLessons,
     getAllVocabularies,
     getAllCollocations,
@@ -71,7 +73,12 @@ export default function AdminPage() {
   } = useAppStore()
 
   const { language, t } = useLanguageStore()
+  const [mounted, setMounted] = useState(false)
   const [adminTab, setAdminTab] = useState<AdminTab>('overview')
+
+  React.useEffect(() => {
+    setMounted(true)
+  }, [])
 
   const lessons = getAllLessons()
   const vocabularies = getAllVocabularies()
@@ -401,6 +408,50 @@ export default function AdminPage() {
       playWrongSound()
     }
     toast.success(`Bạn đạt ${correct}/${activeTestExam.questions.length} câu đúng!`)
+  }
+
+  if (!mounted) {
+    return (
+      <div className="flex-1 flex items-center justify-center p-12">
+        <div className="w-8 h-8 border-3 border-indigo-600 border-t-transparent rounded-full animate-spin" />
+      </div>
+    )
+  }
+
+  if (!isUserAdmin(user)) {
+    return (
+      <div className="flex-1 flex items-center justify-center p-4 sm:p-6 bg-gradient-to-b from-gray-50 to-white min-h-[65vh]">
+        <div className="max-w-md w-full bg-white rounded-3xl border border-red-100 p-6 sm:p-8 text-center space-y-5 shadow-xl">
+          <div className="w-16 h-16 bg-red-50 text-red-600 rounded-2xl flex items-center justify-center mx-auto border border-red-200/60 shadow-xs">
+            <ShieldCheck className="w-8 h-8" />
+          </div>
+          <div className="space-y-2">
+            <h2 className="text-xl font-bold text-gray-900">
+              {language === 'vi' ? 'Không Có Quyền Truy Cập' : 'Access Denied'}
+            </h2>
+            <p className="text-xs sm:text-sm text-gray-500 leading-relaxed">
+              {language === 'vi'
+                ? 'Khu vực này chỉ dành riêng cho tài khoản Quản trị viên (Admin) được phân quyền trên hệ thống Supabase. Tài khoản hiện tại không có quyền truy cập.'
+                : 'This area is restricted to system Administrators configured in Supabase. Your current account does not have admin permissions.'}
+            </p>
+          </div>
+          <div className="pt-2 flex flex-col sm:flex-row gap-3">
+            <Link
+              href="/dashboard"
+              className="flex-1 py-2.5 px-4 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs transition-colors shadow-xs"
+            >
+              {language === 'vi' ? 'Về Bảng Điều Khiển' : 'Go to Dashboard'}
+            </Link>
+            <Link
+              href="/"
+              className="flex-1 py-2.5 px-4 rounded-xl border border-gray-200 hover:bg-gray-50 text-gray-700 font-bold text-xs transition-colors"
+            >
+              {language === 'vi' ? 'Về Trang Chủ' : 'Back to Home'}
+            </Link>
+          </div>
+        </div>
+      </div>
+    )
   }
 
   return (

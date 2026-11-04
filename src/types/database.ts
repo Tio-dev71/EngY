@@ -15,6 +15,8 @@ export interface Database {
           avatar_url: string | null
           track_type: TrackType
           level: DifficultyLevel
+          role?: string
+          is_admin?: boolean
           xp_total: number
           streak_days: number
           last_active_at: string

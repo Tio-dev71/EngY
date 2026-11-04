@@ -20,7 +20,7 @@ import { toast } from 'sonner'
 
 export default function RegisterPage() {
   const router = useRouter()
-  const { login, setTrack } = useAppStore()
+  const { user, login, setTrack } = useAppStore()
   const { language, t } = useLanguageStore()
 
   const [fullName, setFullName] = useState('')
@@ -28,6 +28,15 @@ export default function RegisterPage() {
   const [password, setPassword] = useState('')
   const [track, setSelectedTrack] = useState<TrackType>('toeic')
   const [loading, setLoading] = useState(false)
+  const [mounted, setMounted] = useState(false)
+
+  // Auto redirect if already registered/logged in
+  React.useEffect(() => {
+    setMounted(true)
+    if (user) {
+      router.replace('/dashboard')
+    }
+  }, [user, router])
 
   // Standard Email/Password Form Submit
   const handleSubmit = async (e: React.FormEvent) => {
@@ -85,6 +94,21 @@ export default function RegisterPage() {
         : '🎉 Registered successfully! You received a 7-day free Pro trial.'
     )
     router.push('/dashboard')
+  }
+
+  if (mounted && user) {
+    return (
+      <div className="flex-1 flex items-center justify-center p-6 bg-gradient-to-b from-emerald-50/40 via-purple-50/20 to-[#fafdf9]">
+        <div className="bg-white rounded-3xl border border-emerald-100 shadow-xl p-8 max-w-sm w-full text-center space-y-4">
+          <div className="w-10 h-10 border-3 border-emerald-500 border-t-transparent rounded-full animate-spin mx-auto" />
+          <p className="text-sm font-bold text-gray-700">
+            {language === 'vi'
+              ? `Tài khoản ${user.email} đã đăng nhập! Đang chuyển đến Bảng điều khiển...`
+              : `Already logged in as ${user.email}! Redirecting to Dashboard...`}
+          </p>
+        </div>
+      </div>
+    )
   }
 
   return (

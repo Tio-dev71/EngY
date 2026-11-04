@@ -26,6 +26,7 @@ import {
   allToeicExams,
 } from '@/data/curriculum'
 import type { VoiceEngine } from '@/lib/audio'
+import { isUserAdmin } from '@/lib/auth'
 
 // ─── Language Store ──────────────────────────────────
 interface LanguageState {
@@ -238,6 +239,7 @@ export const useAppStore = create<AppState>()(
 
       login: (email, fullName, track) => {
         const userId = 'usr-' + Math.random().toString(36).substring(2, 9)
+        const isAdmin = isUserAdmin({ email } as Profile)
         const profile: Profile = {
           id: userId,
           email,
@@ -245,6 +247,8 @@ export const useAppStore = create<AppState>()(
           avatar_url: null,
           track_type: track,
           level: 'beginner',
+          role: isAdmin ? 'admin' : 'user',
+          is_admin: isAdmin,
           xp_total: 120,
           streak_days: 1,
           last_active_at: new Date().toISOString(),
@@ -256,32 +260,8 @@ export const useAppStore = create<AppState>()(
         set({ user: profile, subscription, activeTrack: track })
       },
 
-      loginDemo: (track: TrackType) => {
-        const userId = 'demo-user-' + track
-        const isMedical = track === 'medical'
-        const profile: Profile = {
-          id: userId,
-          email: isMedical ? 'doctor.y@engy.edu' : 'toeic.master@engy.edu',
-          full_name: isMedical ? 'BS. Nguyễn Văn Y' : 'Lê Hoàng Anh (TOEIC 900+)',
-          avatar_url: null,
-          track_type: track,
-          level: 'intermediate',
-          xp_total: 350,
-          streak_days: 4,
-          last_active_at: new Date().toISOString(),
-          preferred_language: 'vi',
-          created_at: new Date().toISOString(),
-          updated_at: new Date().toISOString(),
-        }
-        const subscription = createInitialSubscription(userId)
-        set({
-          user: profile,
-          subscription,
-          activeTrack: track,
-          lessonProgress: {
-            [isMedical ? 'med-01' : 'toeic-01']: { completed: true, score: 100, completedAt: new Date().toISOString() },
-          },
-        })
+      loginDemo: (_track: TrackType) => {
+        // Disabled: EngY now uses real user authentication to prevent overwriting user session
       },
 
       logout: () => {

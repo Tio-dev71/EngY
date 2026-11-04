@@ -23,7 +23,7 @@ import { playAudioText } from '@/lib/audio'
 
 export default function HomePage() {
   const router = useRouter()
-  const { activeTrack, setTrack, loginDemo, voiceEngine } = useAppStore()
+  const { user, activeTrack, setTrack, voiceEngine } = useAppStore()
   const { language, t } = useLanguageStore()
   const [isPlayingAudio, setIsPlayingAudio] = useState(false)
 
@@ -38,10 +38,13 @@ export default function HomePage() {
     })
   }
 
-  const handleSelectTrackAndDemo = (track: TrackType) => {
+  const handleStartLearning = (track: TrackType) => {
     setTrack(track)
-    loginDemo(track)
-    router.push('/dashboard')
+    if (user) {
+      router.push('/dashboard')
+    } else {
+      router.push('/lessons')
+    }
   }
 
   return (
@@ -108,12 +111,19 @@ export default function HomePage() {
             {/* CTA Buttons */}
             <div className="flex flex-col sm:flex-row items-center justify-center gap-3 pt-2">
               <button
-                onClick={() => handleSelectTrackAndDemo(activeTrack)}
+                onClick={() => handleStartLearning(activeTrack)}
                 className="w-full sm:w-auto px-8 py-3.5 rounded-2xl bg-gradient-to-r from-emerald-500 to-teal-600 text-white font-bold text-sm shadow-lg shadow-emerald-200/50 hover:shadow-xl hover:shadow-emerald-300/50 hover:-translate-y-0.5 transition-all flex items-center justify-center gap-2"
               >
                 <Zap className="w-4 h-4" />
                 <span>
-                  {t('btnQuickStart')} (
+                  {user
+                    ? language === 'vi'
+                      ? 'Tiếp tục học'
+                      : 'Continue Learning'
+                    : language === 'vi'
+                    ? 'Bắt đầu học ngay'
+                    : 'Start Learning Now'}{' '}
+                  (
                   {activeTrack === 'medical'
                     ? language === 'vi'
                       ? 'Track Y Khoa'
@@ -226,7 +236,7 @@ export default function HomePage() {
                 <div className="flex items-center justify-between pt-4 border-t border-gray-100 text-xs">
                   <span className="text-gray-400">{t('sampleAudioHint')}</span>
                   <button
-                    onClick={() => handleSelectTrackAndDemo(activeTrack)}
+                    onClick={() => handleStartLearning(activeTrack)}
                     className="font-bold text-emerald-600 hover:text-emerald-700 flex items-center gap-1 group/btn"
                   >
                     <span>{t('sampleViewAll')}</span>
@@ -339,7 +349,7 @@ export default function HomePage() {
 
               <div className="pt-8">
                 <button
-                  onClick={() => handleSelectTrackAndDemo('toeic')}
+                  onClick={() => handleStartLearning('toeic')}
                   className="w-full py-3 rounded-2xl bg-emerald-500 text-white font-bold text-xs hover:bg-emerald-600 transition-colors flex items-center justify-center gap-2"
                 >
                   <span>
@@ -393,7 +403,7 @@ export default function HomePage() {
 
               <div className="pt-8">
                 <button
-                  onClick={() => handleSelectTrackAndDemo('medical')}
+                  onClick={() => handleStartLearning('medical')}
                   className="w-full py-3 rounded-2xl bg-purple-500 text-white font-bold text-xs hover:bg-purple-600 transition-colors flex items-center justify-center gap-2"
                 >
                   <span>

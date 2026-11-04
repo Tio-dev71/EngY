@@ -4,6 +4,7 @@ import { useEffect } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import { useAppStore } from '@/lib/store'
 import type { Profile, TrackType } from '@/types/database'
+import { isUserAdmin } from '@/lib/auth'
 
 export default function AuthSync() {
   const { user, setUser, activeTrack, setTrack } = useAppStore()
@@ -12,11 +13,23 @@ export default function AuthSync() {
     let mounted = true
     const supabase = createClient()
 
-    const syncSupabaseUser = (sbUser: any) => {
+    // Clean up any lingering demo accounts from older sessions
+    const existingUser = useAppStore.getState().user
+    if (
+      existingUser &&
+      (existingUser.id?.startsWith('demo-user-') ||
+        existingUser.email === 'doctor.y@engy.edu' ||
+        existingUser.email === 'toeic.master@engy.edu')
+    ) {
+      useAppStore.getState().logout()
+    }
+
+    const syncSupabaseUser = async (sbUser: any) => {
       if (!sbUser || !mounted) return
 
       const email = sbUser.email || ''
       const metadata = sbUser.user_metadata || {}
+      const appMetadata = sbUser.app_metadata || {}
       const fullName =
         metadata.full_name ||
         metadata.name ||
@@ -24,11 +37,33 @@ export default function AuthSync() {
         (email ? email.split('@')[0] : 'Học viên')
       const avatarUrl = metadata.avatar_url || metadata.picture || null
 
+      let isAdmin =
+        metadata.role === 'admin' ||
+        metadata.is_admin === true ||
+        appMetadata.role === 'admin' ||
+        isUserAdmin({ email } as Profile)
+
+      // Query profiles table in Supabase if role is set there
+      try {
+        const { data: dbProfile } = await supabase
+          .from('profiles')
+          .select('role, is_admin')
+          .eq('id', sbUser.id)
+          .maybeSingle()
+
+        const profileData = dbProfile as any
+        if (profileData?.role === 'admin' || profileData?.is_admin === true) {
+          isAdmin = true
+        }
+      } catch {
+        // Table or columns may not exist yet, fallback to metadata/email check
+      }
+
       const currentStoreUser = useAppStore.getState().user
       const currentTrack = useAppStore.getState().activeTrack
 
       // Only update if no user is logged in, or ID matches Supabase user but info is outdated
-      if (!currentStoreUser || currentStoreUser.id !== sbUser.id) {
+      if (!currentStoreUser || currentStoreUser.id !== sbUser.id || currentStoreUser.is_admin !== isAdmin) {
         const profile: Profile = {
           id: sbUser.id,
           email,
@@ -36,6 +71,8 @@ export default function AuthSync() {
           avatar_url: avatarUrl,
           track_type: currentTrack || 'toeic',
           level: 'beginner',
+          role: isAdmin ? 'admin' : 'user',
+          is_admin: isAdmin,
           xp_total: currentStoreUser?.xp_total || 120,
           streak_days: currentStoreUser?.streak_days || 1,
           last_active_at: new Date().toISOString(),
