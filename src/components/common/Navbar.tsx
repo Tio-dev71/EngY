@@ -29,6 +29,7 @@ import {
 import { useAppStore, useLanguageStore } from '@/lib/store'
 import type { TrackType } from '@/types/database'
 import VoiceSelector from './VoiceSelector'
+import { createClient } from '@/lib/supabase/client'
 
 export default function Navbar() {
   const pathname = usePathname()
@@ -40,6 +41,16 @@ export default function Navbar() {
   const [trackDropdownOpen, setTrackDropdownOpen] = useState(false)
   const [userDropdownOpen, setUserDropdownOpen] = useState(false)
   const [mounted, setMounted] = useState(false)
+
+  const handleLogout = async () => {
+    try {
+      const supabase = createClient()
+      await supabase.auth.signOut()
+    } catch {
+      // ignore
+    }
+    logout()
+  }
 
   const trackDropdownRef = useRef<HTMLDivElement>(null)
   const userDropdownRef = useRef<HTMLDivElement>(null)
@@ -353,7 +364,7 @@ export default function Navbar() {
                     <button
                       onClick={() => {
                         setUserDropdownOpen(false)
-                        logout()
+                        handleLogout()
                       }}
                       className="w-full flex items-center gap-2 px-3 py-2 rounded-xl text-xs font-semibold text-red-600 hover:bg-red-50 transition-colors"
                     >
@@ -493,7 +504,7 @@ export default function Navbar() {
               <button
                 onClick={() => {
                   setMobileMenuOpen(false)
-                  logout()
+                  handleLogout()
                 }}
                 className="text-red-500 font-bold hover:underline flex items-center gap-1 text-xs"
               >

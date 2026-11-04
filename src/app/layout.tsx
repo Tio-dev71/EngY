@@ -4,6 +4,7 @@ import './globals.css'
 import { Suspense } from 'react'
 import Navbar from '@/components/common/Navbar'
 import Footer from '@/components/common/Footer'
+import AuthSync from '@/components/common/AuthSync'
 import { Toaster } from 'sonner'
 
 const inter = Inter({
@@ -51,6 +52,7 @@ export default function RootLayout({
         <link rel="apple-touch-icon" href="/EngYfavicon.png" />
       </head>
       <body className="min-h-full flex flex-col font-sans bg-[#fafdf9] text-gray-900 selection:bg-emerald-100 selection:text-emerald-900">
+        <AuthSync />
         <Suspense fallback={<div className="h-16 bg-white border-b border-gray-100" />}>
           <Navbar />
         </Suspense>
