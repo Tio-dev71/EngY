@@ -406,15 +406,16 @@ export default function ExercisesPage() {
               : 'Targeted clinical English exercises covering upper-to-lower respiratory, cardiovascular, digestive, nervous, and renal systems:'}
           </p>
 
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 pt-1">
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-2 pt-1">
             {[
-              { id: 'all', label: 'Tất Cả Hệ', icon: '🩺', count: trackExercises.length },
+              { id: 'all', label: 'Tất Cả Hệ', icon: '🩺' },
               { id: 'Hệ Hô Hấp (Respiratory System)', label: 'Hệ Hô Hấp (Mũi→Phổi)', icon: '🫁' },
               { id: 'Hệ Tim Mạch (Cardiovascular System)', label: 'Hệ Tim Mạch', icon: '🫀' },
               { id: 'Hệ Tiêu Hóa (Gastrointestinal System)', label: 'Hệ Tiêu Hóa & Gan', icon: '🥗' },
               { id: 'Hệ Thần Kinh (Nervous System)', label: 'Hệ Thần Kinh', icon: '🧠' },
               { id: 'Hệ Tiết Niệu & Thận (Urinary & Renal)', label: 'Tiết Niệu & Thận', icon: '💧' },
               { id: 'Hệ Cơ Xương Khớp (Musculoskeletal)', label: 'Cơ Xương Khớp', icon: '🦴' },
+              { id: 'Hệ Da & Cấu Trúc Phụ (Integumentary System)', label: 'Hệ Da & Mô Bọc', icon: '🧴' },
               { id: 'Hệ Nội Tiết & Chuyển Hóa (Endocrine)', label: 'Nội Tiết & Chuyển Hóa', icon: '🧪' },
               { id: 'Hệ Miễn Dịch & Huyết Học (Immune & Hematology)', label: 'Miễn Dịch & Máu', icon: '🩸' },
             ].map((system) => {
