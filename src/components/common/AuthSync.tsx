@@ -43,11 +43,13 @@ export default function AuthSync() {
         appMetadata.role === 'admin' ||
         isUserAdmin({ email } as Profile)
 
-      // Query profiles table in Supabase if role is set there
+      // Query profiles table in Supabase if role/stats are set there
+      let userXp = 0
+      let userStreak = 0
       try {
         const { data: dbProfile } = await supabase
           .from('profiles')
-          .select('role, is_admin')
+          .select('role, is_admin, xp_total, streak_days')
           .eq('id', sbUser.id)
           .maybeSingle()
 
@@ -55,15 +57,42 @@ export default function AuthSync() {
         if (profileData?.role === 'admin' || profileData?.is_admin === true) {
           isAdmin = true
         }
+        if (typeof profileData?.xp_total === 'number') {
+          userXp = profileData.xp_total
+        }
+        if (typeof profileData?.streak_days === 'number') {
+          userStreak = profileData.streak_days
+        }
       } catch {
         // Table or columns may not exist yet, fallback to metadata/email check
       }
 
       const currentStoreUser = useAppStore.getState().user
       const currentTrack = useAppStore.getState().activeTrack
+      const isNewUser = !currentStoreUser || currentStoreUser.id !== sbUser.id
+
+      // Clean up mock sample data if lingering in localStorage from earlier versions
+      const storeNotes = useAppStore.getState().notes
+      const hasMockNotes = storeNotes.some((n) => n.id.startsWith('note-sample-'))
+      const hasMockLesson =
+        useAppStore.getState().lessonProgress['toeic-01']?.score === 95 ||
+        (isNewUser && Object.keys(useAppStore.getState().lessonProgress).length > 0)
+
+      if (isNewUser || hasMockNotes || hasMockLesson || currentStoreUser?.xp_total === 120) {
+        useAppStore.setState((s) => ({
+          notes: s.notes.filter((n) => !n.id.startsWith('note-sample-')),
+          lessonProgress: isNewUser || hasMockLesson ? {} : s.lessonProgress,
+          vocabMastery: isNewUser ? {} : s.vocabMastery,
+          gameScores: isNewUser ? [] : s.gameScores,
+        }))
+      }
 
       // Only update if no user is logged in, or ID matches Supabase user but info is outdated
-      if (!currentStoreUser || currentStoreUser.id !== sbUser.id || currentStoreUser.is_admin !== isAdmin) {
+      if (
+        isNewUser ||
+        currentStoreUser.is_admin !== isAdmin ||
+        currentStoreUser.xp_total === 120
+      ) {
         const profile: Profile = {
           id: sbUser.id,
           email,
@@ -73,8 +102,14 @@ export default function AuthSync() {
           level: 'beginner',
           role: isAdmin ? 'admin' : 'user',
           is_admin: isAdmin,
-          xp_total: currentStoreUser?.xp_total || 120,
-          streak_days: currentStoreUser?.streak_days || 1,
+          xp_total:
+            isNewUser || currentStoreUser?.xp_total === 120
+              ? userXp
+              : currentStoreUser?.xp_total ?? 0,
+          streak_days:
+            isNewUser || currentStoreUser?.streak_days === 1
+              ? userStreak
+              : currentStoreUser?.streak_days ?? 0,
           last_active_at: new Date().toISOString(),
           preferred_language: 'vi',
           created_at: sbUser.created_at || new Date().toISOString(),

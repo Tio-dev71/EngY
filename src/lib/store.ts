@@ -158,33 +158,8 @@ export const useAppStore = create<AppState>()(
       activeTrack: 'toeic',
       voiceEngine: 'edge_jenny',
       isLoading: false,
-      lessonProgress: {
-        'toeic-01': { completed: true, score: 95, completedAt: new Date().toISOString() },
-      },
-      notes: [
-        {
-          id: 'note-sample-1',
-          user_id: 'default',
-          lesson_id: 'toeic-01',
-          vocabulary_id: null,
-          content: 'Lưu ý từ Agenda hay xuất hiện trong Part 3 & 4 đoạn đối thoại cuộc họp!',
-          color: '#bbf7d4', // mint
-          pinned: true,
-          created_at: new Date().toISOString(),
-          updated_at: new Date().toISOString(),
-        },
-        {
-          id: 'note-sample-2',
-          user_id: 'default',
-          lesson_id: 'med-01',
-          vocabulary_id: null,
-          content: 'Hậu tố -cardial liên quan đến tim, ví dụ Myocardial infarction (nhồi máu cơ tim).',
-          color: '#e9d5ff', // purple
-          pinned: true,
-          created_at: new Date().toISOString(),
-          updated_at: new Date().toISOString(),
-        },
-      ],
+      lessonProgress: {},
+      notes: [],
       vocabMastery: {},
       gameScores: [],
 
@@ -249,15 +224,23 @@ export const useAppStore = create<AppState>()(
           level: 'beginner',
           role: isAdmin ? 'admin' : 'user',
           is_admin: isAdmin,
-          xp_total: 120,
-          streak_days: 1,
+          xp_total: 0,
+          streak_days: 0,
           last_active_at: new Date().toISOString(),
           preferred_language: 'vi',
           created_at: new Date().toISOString(),
           updated_at: new Date().toISOString(),
         }
         const subscription = createInitialSubscription(userId)
-        set({ user: profile, subscription, activeTrack: track })
+        set({
+          user: profile,
+          subscription,
+          activeTrack: track,
+          lessonProgress: {},
+          notes: [],
+          vocabMastery: {},
+          gameScores: [],
+        })
       },
 
       loginDemo: (_track: TrackType) => {
@@ -379,12 +362,12 @@ export const useAppStore = create<AppState>()(
         const trackVocabs = allVocabularies.filter((v) => v.track_type === track)
         const now = new Date()
 
-        // Return vocabs whose mastery is due or not reviewed yet
+        // Return vocabs that the user has already studied AND whose review date is due
         return trackVocabs.filter((vocab) => {
           // generate pseudo uuid for matching seed
           const pseudoId = `${vocab.lesson_id}-${vocab.word}`
           const mastery = state.vocabMastery[pseudoId]
-          if (!mastery) return true // new word to review
+          if (!mastery) return false // Not learned yet - only review words already studied
           return new Date(mastery.next_review_at) <= now
         })
       },
