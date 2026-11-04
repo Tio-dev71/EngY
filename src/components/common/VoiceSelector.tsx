@@ -146,8 +146,8 @@ export default function VoiceSelector() {
         }
       >
         <Volume2 className="w-3.5 h-3.5 text-purple-600 shrink-0" />
-        <span className="hidden xl:inline">{currentLabel}</span>
-        <span className="hidden sm:inline xl:hidden">{currentShort}</span>
+        <span className="hidden 2xl:inline">{currentLabel}</span>
+        <span className="hidden sm:inline 2xl:hidden">{currentShort}</span>
         <ChevronDown className="w-3 h-3 opacity-60 shrink-0" />
       </button>
 

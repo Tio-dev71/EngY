@@ -199,7 +199,7 @@ export default function Navbar() {
           </div>
 
           {/* ─── Center Section: Navigation Links ─── */}
-          <nav className="hidden lg:flex items-center gap-1 shrink min-w-0">
+          <nav className="hidden lg:flex items-center gap-1 xl:gap-1.5 shrink-0">
             {navLinks.map((link) => {
               const Icon = link.icon
               const isActive =
@@ -208,7 +208,7 @@ export default function Navbar() {
                 <Link
                   key={link.href}
                   href={link.href}
-                  className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold transition-all whitespace-nowrap shrink-0 ${
+                  className={`flex items-center gap-1.5 px-2.5 xl:px-3 py-1.5 rounded-xl text-xs font-semibold transition-all whitespace-nowrap shrink-0 ${
                     isActive
                       ? 'bg-emerald-50 text-emerald-700 shadow-2xs font-bold'
                       : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
@@ -245,21 +245,22 @@ export default function Navbar() {
               </Link>
             )}
 
-            {/* Streak & XP (Logged-in compact badges) */}
+            {/* Streak & XP (Combined compact badge) */}
             {user && (
-              <div className="hidden md:flex items-center gap-1.5 shrink-0">
+              <div className="hidden md:flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-orange-50/70 border border-orange-200/50 text-xs font-bold whitespace-nowrap shrink-0">
                 <div
-                  className="flex items-center gap-1 px-2 py-1 rounded-full bg-orange-50 text-orange-600 text-xs font-bold border border-orange-200/60 whitespace-nowrap shrink-0"
+                  className="flex items-center gap-1 text-orange-600"
                   title={`${user.streak_days} ngày học liên tiếp`}
                 >
-                  <Flame className="w-3 h-3 text-orange-500 fill-orange-500 shrink-0" />
+                  <Flame className="w-3.5 h-3.5 text-orange-500 fill-orange-500 shrink-0" />
                   <span>{user.streak_days}</span>
                 </div>
+                <span className="text-gray-300 font-light">•</span>
                 <div
-                  className="hidden xl:flex items-center gap-1 px-2 py-1 rounded-full bg-emerald-50 text-emerald-600 text-xs font-bold border border-emerald-200/60 whitespace-nowrap shrink-0"
+                  className="flex items-center gap-1 text-emerald-600"
                   title={`${user.xp_total} XP tích luỹ`}
                 >
-                  <Sparkles className="w-3 h-3 text-emerald-500 shrink-0" />
+                  <Sparkles className="w-3.5 h-3.5 text-emerald-500 shrink-0" />
                   <span>{user.xp_total} XP</span>
                 </div>
               </div>
@@ -277,18 +278,6 @@ export default function Navbar() {
               <Globe className="w-3.5 h-3.5 text-gray-500 shrink-0" />
               <span className="uppercase">{language}</span>
             </button>
-
-            {/* Admin Portal Quick Link - ONLY visible to verified Admins */}
-            {mounted && isUserAdmin(user) && (
-              <Link
-                href="/admin"
-                className="hidden md:inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl text-xs font-bold text-indigo-700 bg-indigo-50 border border-indigo-200/80 hover:bg-indigo-100 transition-colors shrink-0 shadow-xs"
-                title="Trung tâm Quản trị Admin (Thêm bài học & Đề thi TOEIC)"
-              >
-                <ShieldCheck className="w-4 h-4 text-indigo-600" />
-                <span>Admin</span>
-              </Link>
-            )}
 
             {/* User Profile Dropdown or Login/Register Buttons */}
             {user ? (
