@@ -8,10 +8,8 @@ import {
   Briefcase,
   Stethoscope,
   ArrowRight,
-  Sparkles,
   Lock,
   Mail,
-  Zap,
 } from 'lucide-react'
 import { useAppStore, useLanguageStore } from '@/lib/store'
 import type { TrackType } from '@/types/database'
@@ -19,7 +17,7 @@ import { toast } from 'sonner'
 
 export default function LoginPage() {
   const router = useRouter()
-  const { login, loginDemo, setTrack } = useAppStore()
+  const { login, setTrack } = useAppStore()
   const { language, t } = useLanguageStore()
 
   const [email, setEmail] = useState('')
@@ -31,6 +29,10 @@ export default function LoginPage() {
     e.preventDefault()
     if (!email) {
       toast.error(language === 'vi' ? 'Vui lòng nhập email!' : 'Please enter your email!')
+      return
+    }
+    if (!password) {
+      toast.error(language === 'vi' ? 'Vui lòng nhập mật khẩu!' : 'Please enter your password!')
       return
     }
 
@@ -45,17 +47,6 @@ export default function LoginPage() {
       )
       router.push('/dashboard')
     }, 400)
-  }
-
-  const handleDemoLogin = (demoTrack: TrackType) => {
-    loginDemo(demoTrack)
-    setTrack(demoTrack)
-    toast.success(
-      language === 'vi'
-        ? `Đã đăng nhập tài khoản Demo ${demoTrack === 'medical' ? 'Y Khoa 🩺' : 'TOEIC 💼'}!`
-        : `Logged in to Demo ${demoTrack === 'medical' ? 'Medical 🩺' : 'TOEIC 💼'} account!`
-    )
-    router.push('/dashboard')
   }
 
   return (
@@ -83,36 +74,6 @@ export default function LoginPage() {
                 ? 'Tiếp tục hành trình chinh phục tiếng Anh TOEIC & Y khoa'
                 : 'Continue your TOEIC & Medical English journey'}
             </p>
-          </div>
-
-          {/* Quick 1-Click Demo Section */}
-          <div className="p-3.5 rounded-2xl bg-gradient-to-r from-emerald-50 to-purple-50 border border-emerald-100/80 space-y-2">
-            <div className="flex items-center gap-1.5 text-xs font-bold text-gray-700">
-              <Zap className="w-3.5 h-3.5 text-amber-500" />
-              <span>
-                {language === 'vi'
-                  ? 'Trải nghiệm nhanh 1 chạm (Demo):'
-                  : '1-Click Quick Demo Access:'}
-              </span>
-            </div>
-            <div className="grid grid-cols-2 gap-2">
-              <button
-                type="button"
-                onClick={() => handleDemoLogin('toeic')}
-                className="py-2 px-3 rounded-xl bg-white text-emerald-700 font-bold text-xs border border-emerald-200 hover:bg-emerald-50 shadow-2xs flex items-center justify-center gap-1.5 transition-all"
-              >
-                <Briefcase className="w-3.5 h-3.5" />
-                <span>Demo TOEIC</span>
-              </button>
-              <button
-                type="button"
-                onClick={() => handleDemoLogin('medical')}
-                className="py-2 px-3 rounded-xl bg-white text-purple-700 font-bold text-xs border border-purple-200 hover:bg-purple-50 shadow-2xs flex items-center justify-center gap-1.5 transition-all"
-              >
-                <Stethoscope className="w-3.5 h-3.5" />
-                <span>Demo Medical Y</span>
-              </button>
-            </div>
           </div>
 
           {/* Form */}
@@ -168,12 +129,7 @@ export default function LoginPage() {
 
             {/* Password */}
             <div className="space-y-1.5">
-              <div className="flex items-center justify-between">
-                <label className="text-xs font-bold text-gray-700">{t('password')}</label>
-                <span className="text-[11px] text-gray-400">
-                  {language === 'vi' ? 'Tùy chọn cho demo' : 'Optional for demo'}
-                </span>
-              </div>
+              <label className="text-xs font-bold text-gray-700">{t('password')}</label>
               <div className="relative">
                 <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-gray-400">
                   <Lock className="w-4 h-4" />
@@ -184,6 +140,8 @@ export default function LoginPage() {
                   onChange={(e) => setPassword(e.target.value)}
                   placeholder="••••••••"
                   className="w-full !pl-10 pr-4 py-3 rounded-2xl border-2 border-gray-200 bg-white text-xs sm:text-sm text-gray-900 placeholder:text-gray-400 outline-none focus:border-emerald-500 focus:ring-3 focus:ring-emerald-500/15 transition-all shadow-2xs"
+                  required
+                  minLength={6}
                 />
               </div>
             </div>

@@ -713,7 +713,7 @@ function GamesContent() {
                       key={card.id}
                       onClick={() => handleCardClick(card)}
                       disabled={card.matched}
-                      className={`h-28 p-3 rounded-2xl border text-xs font-bold flex items-center justify-center text-center transition-all ${cardStyle}`}
+                      className={`min-h-[88px] sm:h-28 p-2.5 sm:p-3 rounded-2xl border text-xs font-bold flex items-center justify-center text-center transition-all break-words ${cardStyle}`}
                     >
                       {card.text}
                     </button>
@@ -812,7 +812,7 @@ function GamesContent() {
                   userLetters.map((l, i) => (
                     <span
                       key={i}
-                      className="w-10 h-10 rounded-xl bg-purple-500 text-white font-black text-sm flex items-center justify-center shadow-xs animate-game-pop"
+                      className="w-8 h-8 sm:w-10 sm:h-10 rounded-xl bg-purple-500 text-white font-black text-xs sm:text-sm flex items-center justify-center shadow-xs animate-game-pop"
                     >
                       {l.toUpperCase()}
                     </span>
@@ -821,12 +821,12 @@ function GamesContent() {
               </div>
 
               {/* Letters pool */}
-              <div className="flex flex-wrap items-center justify-center gap-2">
+              <div className="flex flex-wrap items-center justify-center gap-1.5 sm:gap-2">
                 {scrambledLetters.map((letter, i) => (
                   <button
                     key={i}
                     onClick={() => handlePickLetter(letter, i)}
-                    className="w-11 h-11 rounded-xl bg-white border border-gray-200 hover:border-purple-400 font-black text-base text-gray-800 shadow-xs hover:scale-105 active:scale-95 transition-all"
+                    className="w-9 h-9 sm:w-11 sm:h-11 rounded-xl bg-white border border-gray-200 hover:border-purple-400 font-black text-sm sm:text-base text-gray-800 shadow-xs hover:scale-105 active:scale-95 transition-all"
                   >
                     {letter.toUpperCase()}
                   </button>

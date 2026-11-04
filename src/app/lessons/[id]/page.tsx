@@ -255,8 +255,8 @@ function LessonDetailContent() {
 
       {/* ─── Multi-Dimension Learning Tab Selector ───── */}
       <div
-        className="mb-6 p-1.5 rounded-2xl border border-gray-200 overflow-x-auto"
-        style={{ background: '#f5f5f5' }}
+        className="mb-6 p-1.5 rounded-2xl border border-gray-200 overflow-x-auto scrollbar-none"
+        style={{ background: '#f5f5f5', WebkitOverflowScrolling: 'touch' }}
       >
         <div className="flex items-center gap-1.5 min-w-max">
           {TAB_CONFIG.map((tab) => {

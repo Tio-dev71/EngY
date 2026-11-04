@@ -95,6 +95,14 @@ body {
   background: var(--mint-400);
 }
 
+.scrollbar-none::-webkit-scrollbar {
+  display: none;
+}
+.scrollbar-none {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
 /* ─── Glass effect ────────────────────────────────── */
 .glass {
   background: rgba(255, 255, 255, 0.7);

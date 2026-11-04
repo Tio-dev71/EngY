@@ -35,6 +35,14 @@ export default function RegisterPage() {
       toast.error(language === 'vi' ? 'Vui lòng nhập email!' : 'Please enter your email!')
       return
     }
+    if (!password || password.length < 6) {
+      toast.error(
+        language === 'vi'
+          ? 'Mật khẩu phải có ít nhất 6 ký tự!'
+          : 'Password must be at least 6 characters!'
+      )
+      return
+    }
 
     setLoading(true)
     setTimeout(() => {

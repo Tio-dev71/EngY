@@ -152,7 +152,7 @@ export default function VoiceSelector() {
       </button>
 
       {isOpen && (
-        <div className="absolute right-0 mt-2 w-72 sm:w-80 rounded-2xl bg-white/95 backdrop-blur-xl border border-purple-100 shadow-xl p-3 z-50 animate-in fade-in slide-in-from-top-2 duration-150">
+        <div className="absolute right-0 mt-2 w-72 sm:w-80 max-w-[calc(100vw-1.5rem)] rounded-2xl bg-white/95 backdrop-blur-xl border border-purple-100 shadow-xl p-3 z-50 animate-in fade-in slide-in-from-top-2 duration-150">
           <div className="px-2 py-1.5 mb-2 border-b border-gray-100 flex items-center justify-between">
             <div className="flex items-center gap-1.5 text-xs font-bold text-gray-800">
               <Sparkles className="w-3.5 h-3.5 text-purple-500" />

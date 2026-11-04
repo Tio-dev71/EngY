@@ -79,27 +79,27 @@ export default function HomePage() {
 
             {/* Track Switch Tabs on Hero */}
             <div className="pt-2 pb-1">
-              <div className="inline-flex p-1.5 rounded-2xl bg-white shadow-md border border-gray-100 gap-1.5 max-w-md mx-auto">
+              <div className="inline-flex p-1.5 rounded-2xl bg-white shadow-md border border-gray-100 gap-1.5 max-w-full mx-auto">
                 <button
                   onClick={() => setTrack('toeic')}
-                  className={`flex items-center gap-2 px-5 py-2.5 rounded-xl font-bold text-xs sm:text-sm transition-all ${
+                  className={`flex items-center gap-1.5 sm:gap-2 px-3.5 sm:px-5 py-2 sm:py-2.5 rounded-xl font-bold text-xs sm:text-sm transition-all ${
                     activeTrack === 'toeic'
                       ? 'bg-gradient-to-r from-emerald-500 to-teal-500 text-white shadow-sm'
                       : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
                   }`}
                 >
-                  <Briefcase className="w-4 h-4" />
+                  <Briefcase className="w-3.5 h-3.5 sm:w-4 sm:h-4 shrink-0" />
                   <span>{t('btnToeicTrack')}</span>
                 </button>
                 <button
                   onClick={() => setTrack('medical')}
-                  className={`flex items-center gap-2 px-5 py-2.5 rounded-xl font-bold text-xs sm:text-sm transition-all ${
+                  className={`flex items-center gap-1.5 sm:gap-2 px-3.5 sm:px-5 py-2 sm:py-2.5 rounded-xl font-bold text-xs sm:text-sm transition-all ${
                     activeTrack === 'medical'
                       ? 'bg-gradient-to-r from-purple-500 to-pink-500 text-white shadow-sm'
                       : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
                   }`}
                 >
-                  <Stethoscope className="w-4 h-4" />
+                  <Stethoscope className="w-3.5 h-3.5 sm:w-4 sm:h-4 shrink-0" />
                   <span>{t('btnMedicalTrack')}</span>
                 </button>
               </div>

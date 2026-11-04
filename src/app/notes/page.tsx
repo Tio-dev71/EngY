@@ -13,12 +13,11 @@ import {
   Check,
 } from 'lucide-react'
 import { useAppStore, useLanguageStore } from '@/lib/store'
-import { allLessons } from '@/data/seed'
 import type { Note } from '@/types/database'
 import { toast } from 'sonner'
 
 export default function NotesPage() {
-  const { notes, addNote, updateNote, deleteNote, activeTrack } = useAppStore()
+  const { notes, addNote, updateNote, deleteNote, activeTrack, getAllLessons } = useAppStore()
   const { language, t } = useLanguageStore()
 
   const [searchQuery, setSearchQuery] = useState('')
@@ -31,7 +30,8 @@ export default function NotesPage() {
   const [newPinned, setNewPinned] = useState(false)
   const [newLessonId, setNewLessonId] = useState<string>('')
 
-  const availableLessons = allLessons.filter((l) => l.track_type === activeTrack)
+  const allLessonsList = getAllLessons()
+  const availableLessons = allLessonsList.filter((l) => l.track_type === activeTrack)
 
   // Filter notes
   const filteredNotes = notes

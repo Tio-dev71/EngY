@@ -447,12 +447,35 @@ export default function Navbar() {
             <Link
               href="/admin"
               onClick={() => setMobileMenuOpen(false)}
-              className="flex items-center gap-2 px-3 py-2.5 rounded-xl text-xs font-bold text-indigo-700 bg-indigo-50 border border-indigo-200/60"
+              className="col-span-2 flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs font-bold text-indigo-700 bg-indigo-50/90 border border-indigo-200/70 hover:bg-indigo-100 transition-colors"
             >
-              <ShieldCheck className="w-4 h-4 text-indigo-600 shrink-0" />
-              <span>Quản Trị Admin (Thêm Tài Liệu & Đề Thi)</span>
+              <div className="flex items-center gap-2">
+                <ShieldCheck className="w-4 h-4 text-indigo-600 shrink-0" />
+                <span>Quản Trị Admin (Thêm Bài Học & Đề Thi)</span>
+              </div>
+              <ChevronDown className="w-3.5 h-3.5 -rotate-90 text-indigo-400" />
             </Link>
           </div>
+
+          {/* If Not Logged In, Mobile Login & Register Actions */}
+          {!user && (
+            <div className="pt-2 border-t border-gray-100 grid grid-cols-2 gap-2">
+              <Link
+                href="/login"
+                onClick={() => setMobileMenuOpen(false)}
+                className="py-2.5 px-3 rounded-xl border border-gray-200 text-center font-bold text-xs text-gray-700 hover:bg-gray-50"
+              >
+                {t('login')}
+              </Link>
+              <Link
+                href="/register"
+                onClick={() => setMobileMenuOpen(false)}
+                className="btn-primary !py-2.5 !px-3 text-center text-xs font-bold shadow-xs"
+              >
+                {t('register')}
+              </Link>
+            </div>
+          )}
 
           {/* If Logged In, Mobile Stats */}
           {user && (

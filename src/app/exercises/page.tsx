@@ -386,6 +386,75 @@ export default function ExercisesPage() {
         </button>
       </div>
 
+      {/* ─── Medical Organ Systems Specialized Navigator ───────── */}
+      {activeTrack === 'medical' && (!examStarted || mode === 'practice') && (
+        <div className="p-4 sm:p-5 rounded-3xl bg-gradient-to-br from-purple-50/80 via-indigo-50/40 to-white border border-purple-200/80 shadow-2xs space-y-3">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <span className="text-lg">🫀</span>
+              <h3 className="font-black text-sm text-purple-950">
+                {language === 'vi' ? 'Chuyên Đề Ôn Luyện Theo Từng Hệ Cơ Quan' : 'Organ System Clinical Modules'}
+              </h3>
+            </div>
+            <span className="text-[10px] font-bold text-purple-700 bg-purple-100 px-2 py-0.5 rounded-full">
+              {language === 'vi' ? 'Giải phẫu & Lâm sàng' : 'Anatomy & Clinical'}
+            </span>
+          </div>
+          <p className="text-xs text-gray-500 leading-relaxed">
+            {language === 'vi'
+              ? 'Lộ trình bài tập tiếng Anh y khoa chuyên sâu từ đường hô hấp trên xuống phế nang phổi, tuần hoàn tim mạch, tiêu hóa, thần kinh và thận tiết niệu:'
+              : 'Targeted clinical English exercises covering upper-to-lower respiratory, cardiovascular, digestive, nervous, and renal systems:'}
+          </p>
+
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 pt-1">
+            {[
+              { id: 'all', label: 'Tất Cả Hệ', icon: '🩺', count: trackExercises.length },
+              { id: 'Hệ Hô Hấp (Respiratory System)', label: 'Hệ Hô Hấp (Mũi→Phổi)', icon: '🫁' },
+              { id: 'Hệ Tim Mạch (Cardiovascular System)', label: 'Hệ Tim Mạch', icon: '🫀' },
+              { id: 'Hệ Tiêu Hóa (Gastrointestinal System)', label: 'Hệ Tiêu Hóa & Gan', icon: '🥗' },
+              { id: 'Hệ Thần Kinh (Nervous System)', label: 'Hệ Thần Kinh', icon: '🧠' },
+              { id: 'Hệ Tiết Niệu & Thận (Urinary & Renal)', label: 'Tiết Niệu & Thận', icon: '💧' },
+              { id: 'Hệ Cơ Xương Khớp (Musculoskeletal)', label: 'Cơ Xương Khớp', icon: '🦴' },
+              { id: 'Hệ Nội Tiết & Chuyển Hóa (Endocrine)', label: 'Nội Tiết & Chuyển Hóa', icon: '🧪' },
+              { id: 'Hệ Miễn Dịch & Huyết Học (Immune & Hematology)', label: 'Miễn Dịch & Máu', icon: '🩸' },
+            ].map((system) => {
+              const isSelected = selectedCategory === system.id
+              const count =
+                system.id === 'all'
+                  ? trackExercises.length
+                  : trackExercises.filter((e) => e.category === system.id).length
+
+              return (
+                <button
+                  key={system.id}
+                  type="button"
+                  onClick={() => setSelectedCategory(system.id)}
+                  className={`p-2.5 rounded-2xl border text-left flex items-center gap-2 transition-all min-h-[46px] ${
+                    isSelected
+                      ? 'bg-purple-600 text-white border-purple-700 shadow-md ring-2 ring-purple-200'
+                      : 'bg-white border-purple-100 hover:border-purple-300 text-gray-700 hover:bg-purple-50/50'
+                  }`}
+                >
+                  <span className="text-xl shrink-0">{system.icon}</span>
+                  <div className="min-w-0 flex-1">
+                    <div className="text-[11px] font-black truncate leading-tight">
+                      {system.label}
+                    </div>
+                    <div
+                      className={`text-[9px] font-semibold mt-0.5 ${
+                        isSelected ? 'text-purple-100' : 'text-gray-400'
+                      }`}
+                    >
+                      {count} câu hỏi
+                    </div>
+                  </div>
+                </button>
+              )
+            })}
+          </div>
+        </div>
+      )}
+
       {/* ─── Search & Filters Bar (Only in Practice Mode or before Exam start) ─── */}
       {(!examStarted || mode === 'practice') && (
         <div className="p-4 rounded-3xl bg-white border border-gray-200 shadow-2xs space-y-3">
@@ -428,36 +497,38 @@ export default function ExercisesPage() {
             </div>
           </div>
 
-          {/* Category Chips */}
-          <div className="flex items-center gap-2 overflow-x-auto pb-1 pt-1 text-xs">
-            <span className="text-gray-400 font-bold shrink-0 text-[11px]">Chủ đề:</span>
-            <button
-              onClick={() => setSelectedCategory('all')}
-              className={`px-2.5 py-1 rounded-lg shrink-0 font-bold transition-all ${
-                selectedCategory === 'all'
-                  ? 'bg-gray-900 text-white'
-                  : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
-              }`}
-            >
-              Tất cả ({trackExercises.length})
-            </button>
-            {categories.map((cat) => {
-              const count = trackExercises.filter((e) => e.category === cat).length
-              return (
-                <button
-                  key={cat}
-                  onClick={() => setSelectedCategory(cat)}
-                  className={`px-2.5 py-1 rounded-lg shrink-0 font-medium transition-all ${
-                    selectedCategory === cat
-                      ? 'bg-emerald-600 text-white font-bold'
-                      : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
-                  }`}
-                >
-                  {cat} ({count})
-                </button>
-              )
-            })}
-          </div>
+          {/* Category Chips for TOEIC or secondary filtering */}
+          {activeTrack === 'toeic' && (
+            <div className="flex items-center gap-2 overflow-x-auto pb-1 pt-1 text-xs">
+              <span className="text-gray-400 font-bold shrink-0 text-[11px]">Chủ đề:</span>
+              <button
+                onClick={() => setSelectedCategory('all')}
+                className={`px-2.5 py-1 rounded-lg shrink-0 font-bold transition-all ${
+                  selectedCategory === 'all'
+                    ? 'bg-gray-900 text-white'
+                    : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                }`}
+              >
+                Tất cả ({trackExercises.length})
+              </button>
+              {categories.map((cat) => {
+                const count = trackExercises.filter((e) => e.category === cat).length
+                return (
+                  <button
+                    key={cat}
+                    onClick={() => setSelectedCategory(cat)}
+                    className={`px-2.5 py-1 rounded-lg shrink-0 font-medium transition-all ${
+                      selectedCategory === cat
+                        ? 'bg-emerald-600 text-white font-bold'
+                        : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                    }`}
+                  >
+                    {cat} ({count})
+                  </button>
+                )
+              })}
+            </div>
+          )}
         </div>
       )}
 
@@ -508,28 +579,28 @@ export default function ExercisesPage() {
             return (
               <div
                 key={exercise.id}
-                className="p-6 sm:p-7 rounded-3xl bg-white border border-gray-200 hover:border-emerald-300 shadow-xs transition-all space-y-4"
+                className="p-4 sm:p-7 rounded-3xl bg-white border border-gray-200 hover:border-emerald-300 shadow-xs transition-all space-y-4"
               >
                 {/* Header: Number, Category, Difficulty, TTS button */}
-                <div className="flex items-start justify-between gap-3 flex-wrap">
-                  <div className="flex items-center gap-2 flex-wrap">
-                    <span className="w-7 h-7 rounded-lg bg-gray-900 text-white text-xs font-black flex items-center justify-center">
+                <div className="flex items-start justify-between gap-2.5 flex-wrap">
+                  <div className="flex items-center gap-1.5 sm:gap-2 flex-wrap">
+                    <span className="w-6 h-6 sm:w-7 sm:h-7 rounded-lg bg-gray-900 text-white text-[11px] sm:text-xs font-black flex items-center justify-center shrink-0">
                       #{index + 1}
                     </span>
-                    <span className="text-xs font-bold text-gray-700 bg-gray-100 px-2.5 py-1 rounded-lg">
+                    <span className="text-[11px] sm:text-xs font-bold text-gray-700 bg-gray-100 px-2 sm:px-2.5 py-1 rounded-lg truncate max-w-[200px] sm:max-w-none">
                       {exercise.category}
                     </span>
-                    <span className={`text-[10px] font-extrabold uppercase px-2 py-0.5 rounded-full ${diffBadge}`}>
+                    <span className={`text-[9px] sm:text-[10px] font-extrabold uppercase px-2 py-0.5 rounded-full ${diffBadge}`}>
                       {exercise.difficulty}
                     </span>
-                    <span className="text-xs font-mono font-semibold text-indigo-600 bg-indigo-50 px-2 py-0.5 rounded-md">
+                    <span className="text-[11px] sm:text-xs font-mono font-semibold text-indigo-600 bg-indigo-50 px-2 py-0.5 rounded-md">
                       {exercise.grammar_or_vocab_tag}
                     </span>
                   </div>
 
                   <button
                     onClick={() => playExerciseAudio(exercise.id, exercise.question_text)}
-                    className={`p-2 rounded-xl text-xs font-semibold flex items-center gap-1 transition-all ${
+                    className={`p-1.5 sm:p-2 rounded-xl text-xs font-semibold flex items-center gap-1 transition-all shrink-0 ${
                       isPlayingAudio
                         ? 'bg-emerald-500 text-white scale-105'
                         : 'bg-emerald-50 text-emerald-700 hover:bg-emerald-100'
@@ -544,13 +615,13 @@ export default function ExercisesPage() {
                 {/* Title & Question */}
                 <div>
                   <h3 className="text-xs font-bold text-gray-400 mb-1">{exercise.title}</h3>
-                  <p className="text-base sm:text-lg font-bold text-gray-900 leading-relaxed">
+                  <p className="text-sm sm:text-lg font-bold text-gray-900 leading-relaxed">
                     {exercise.question_text}
                   </p>
                 </div>
 
                 {/* 4 Options Grid */}
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 sm:gap-3 pt-2">
                   {exercise.options.map((option) => {
                     const isSelected = selectedOpt === option.key
                     const isCorrectAnswer = exercise.correct_answer === option.key
@@ -572,7 +643,7 @@ export default function ExercisesPage() {
                         key={option.key}
                         onClick={() => handlePracticeSelect(exercise, option.key)}
                         disabled={isRevealed}
-                        className={`p-3.5 sm:p-4 rounded-2xl border text-xs sm:text-sm text-left flex items-center gap-3 transition-all ${btnStyle}`}
+                        className={`p-3 sm:p-4 rounded-2xl border text-xs sm:text-sm text-left flex items-center gap-2.5 sm:gap-3 transition-all min-h-[48px] ${btnStyle}`}
                       >
                         <span
                           className={`w-6 h-6 rounded-lg font-black text-xs flex items-center justify-center shrink-0 ${
@@ -585,7 +656,7 @@ export default function ExercisesPage() {
                         >
                           {option.key}
                         </span>
-                        <span className="font-semibold">{option.text}</span>
+                        <span className="font-semibold break-words">{option.text}</span>
                       </button>
                     )
                   })}
